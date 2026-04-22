@@ -15,20 +15,28 @@ import InsightsScreen from "./screens/InsightsScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function MainTabs() {
+function MainTabs({ userId }) {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Applications" component={ApplicationsScreen} />
-      <Tab.Screen name="Categories" component={CategoriesScreen} />
-      <Tab.Screen name="Targets" component={TargetsScreen} />
-      <Tab.Screen name="Insights" component={InsightsScreen} />
+      <Tab.Screen name="Applications">
+        {props => <ApplicationsScreen {...props} route={{ ...props.route, params: { ...props.route.params, userId } }} />}
+      </Tab.Screen>
+      <Tab.Screen name="Categories">
+        {props => <CategoriesScreen {...props} route={{ ...props.route, params: { ...props.route.params, userId } }} />}
+      </Tab.Screen>
+      <Tab.Screen name="Targets">
+        {props => <TargetsScreen {...props} route={{ ...props.route, params: { ...props.route.params, userId } }} />}
+      </Tab.Screen>
+      <Tab.Screen name="Insights">
+        {props => <InsightsScreen {...props} route={{ ...props.route, params: { ...props.route.params, userId } }} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     async function setup() {
@@ -44,16 +52,18 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!loggedIn ? (
+        {!userId ? (
           <>
             <Stack.Screen name="Login">
-              {props => <LoginScreen {...props} onLogin={() => setLoggedIn(true)} />}
+              {props => <LoginScreen {...props} onLogin={(id) => setUserId(id)} />}
             </Stack.Screen>
             <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (
           <>
-            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen name="Main">
+              {props => <MainTabs {...props} userId={userId} />}
+            </Stack.Screen>
             <Stack.Screen name="AddApplication" component={AddApplicationScreen} />
           </>
         )}
