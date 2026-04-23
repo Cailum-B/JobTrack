@@ -14,6 +14,7 @@ export default function InsightsScreen({ route, onLogout }) {
     async function loadData() {
       const a = await db.select().from(applications).where(eq(applications.userId, userId));
       const c = await db.select().from(categories).where(eq(categories.userId, userId));
+      // grabbing the user's app ids first so the status counts stay user-specific
       const appIds = a.map(app => app.id);
       const l = appIds.length > 0 ? await db.select().from(statusLogs).where(inArray(statusLogs.applicationId, appIds)) : [];
       setApps(a);
@@ -33,6 +34,7 @@ export default function InsightsScreen({ route, onLogout }) {
     categoryCounts[app.categoryId] = (categoryCounts[app.categoryId] || 0) + 1;
   });
 
+  // avoids dividing by 0 if there are no categories yet
   const maxCount = Math.max(...Object.values(categoryCounts), 1);
 
   async function handleDeleteAccount() {

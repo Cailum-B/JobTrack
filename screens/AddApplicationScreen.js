@@ -31,6 +31,7 @@ export default function AddApplicationScreen({ navigation, route, userId: propUs
       return;
     }
     try {
+      // same screen does both add + edit just to keep things simpler
       if (existing) {
         await db.update(applications)
           .set({ companyName, roleName, date, notes, categoryId })

@@ -4,6 +4,7 @@ import { users, categories, applications, statusLogs, targets } from "./schema";
 export async function seedDatabase() {
   try {
     const existingUsers = await db.select().from(users);
+    // only seed once, otherwise the sample data just keeps stacking up
     if (existingUsers.length > 0) return;
 
     await db.insert(users).values([

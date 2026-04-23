@@ -24,6 +24,7 @@ export default function ApplicationsScreen({ navigation, route }) {
 
   useEffect(() => {
     if (route?.params?.refresh) {
+      // reloading after add/edit so the list updates straight away
       loadApplications();
     }
   }, [route?.params?.refresh]);

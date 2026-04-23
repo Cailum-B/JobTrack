@@ -6,6 +6,7 @@ const sqlite = SQLite.openDatabaseSync("jobtrack.db");
 export const db = drizzle(sqlite, { schema });
 
 export async function initDB() {
+  // doing the table setup here so the app can just call this once on startup
   await sqlite.execAsync(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

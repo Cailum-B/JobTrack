@@ -82,7 +82,7 @@ export default function TargetsScreen({ route }) {
                 <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: met ? "#2e7d32" : "#4caf7f" }]} />
               </View>
               <Text style={styles.progressText}>
-                {appCount}/{item.goal} — {met ? "✅ Target met!" : `${item.goal - appCount} remaining`}
+                {appCount}/{item.goal} - {met ? "Target met!" : `${item.goal - appCount} remaining`}
               </Text>
               <TouchableOpacity onPress={() => handleDelete(item.id)}>
                 <Text style={styles.deleteBtn}>Remove</Text>
