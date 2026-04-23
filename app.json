@@ -27,6 +27,12 @@
     },
     "plugins": [
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c0b6b3bb-723f-4848-b4bd-ca31af0b0e44"
+      }
+    },
+    "owner": "cailum22"
   }
 }
