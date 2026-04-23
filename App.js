@@ -15,7 +15,7 @@ import InsightsScreen from "./screens/InsightsScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function MainTabs({ userId }) {
+function MainTabs({ userId, onLogout }) {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Applications">
@@ -28,7 +28,7 @@ function MainTabs({ userId }) {
         {props => <TargetsScreen {...props} route={{ ...props.route, params: { ...props.route.params, userId } }} />}
       </Tab.Screen>
       <Tab.Screen name="Insights">
-        {props => <InsightsScreen {...props} route={{ ...props.route, params: { ...props.route.params, userId } }} />}
+        {props => <InsightsScreen {...props} onLogout={onLogout} route={{ ...props.route, params: { ...props.route.params, userId } }} />}
       </Tab.Screen>
     </Tab.Navigator>
   );
@@ -62,9 +62,11 @@ export default function App() {
         ) : (
           <>
             <Stack.Screen name="Main">
-              {props => <MainTabs {...props} userId={userId} />}
+              {props => <MainTabs {...props} userId={userId} onLogout={() => setUserId(null)} />}
             </Stack.Screen>
-            <Stack.Screen name="AddApplication" component={AddApplicationScreen} />
+            <Stack.Screen name="AddApplication">
+              {props => <AddApplicationScreen {...props} userId={userId} />}
+            </Stack.Screen>
           </>
         )}
       </Stack.Navigator>

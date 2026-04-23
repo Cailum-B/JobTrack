@@ -4,9 +4,9 @@ import { db } from "../db/database";
 import { applications, categories, statusLogs } from "../db/schema";
 import { eq } from "drizzle-orm";
 
-export default function AddApplicationScreen({ navigation, route }) {
+export default function AddApplicationScreen({ navigation, route, userId: propUserId }) {
   const existing = route?.params?.application;
-  const userId = route?.params?.userId || 1;
+  const userId = propUserId || route?.params?.userId || 1;
 
   const [companyName, setCompanyName] = useState(existing?.companyName || "");
   const [roleName, setRoleName] = useState(existing?.roleName || "");
@@ -45,7 +45,7 @@ export default function AddApplicationScreen({ navigation, route }) {
           changedAt: date,
         });
       }
-      navigation.navigate("Applications", { refresh: Date.now(), userId });
+      navigation.navigate("Main", { screen: "Applications", params: { refresh: Date.now(), userId } });
     } catch (e) {
       console.error(e);
       Alert.alert("Something went wrong");
@@ -57,8 +57,9 @@ export default function AddApplicationScreen({ navigation, route }) {
       { text: "Cancel" },
       {
         text: "Delete", onPress: async () => {
+          await db.delete(statusLogs).where(eq(statusLogs.applicationId, existing.id));
           await db.delete(applications).where(eq(applications.id, existing.id));
-          navigation.navigate("Applications", { refresh: Date.now(), userId });
+          navigation.navigate("Main", { screen: "Applications", params: { refresh: Date.now(), userId } });
         }
       }
     ]);

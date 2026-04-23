@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { db } from "../db/database";
-import { applications, categories, statusLogs } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { applications, categories, statusLogs, users, targets } from "../db/schema";
+import { eq, inArray } from "drizzle-orm";
 
-export default function InsightsScreen({ route }) {
+export default function InsightsScreen({ route, onLogout }) {
   const userId = route?.params?.userId || 1;
   const [apps, setApps] = useState([]);
   const [cats, setCats] = useState([]);
@@ -14,7 +14,8 @@ export default function InsightsScreen({ route }) {
     async function loadData() {
       const a = await db.select().from(applications).where(eq(applications.userId, userId));
       const c = await db.select().from(categories).where(eq(categories.userId, userId));
-      const l = await db.select().from(statusLogs);
+      const appIds = a.map(app => app.id);
+      const l = appIds.length > 0 ? await db.select().from(statusLogs).where(inArray(statusLogs.applicationId, appIds)) : [];
       setApps(a);
       setCats(c);
       setLogs(l);
@@ -33,6 +34,26 @@ export default function InsightsScreen({ route }) {
   });
 
   const maxCount = Math.max(...Object.values(categoryCounts), 1);
+
+  async function handleDeleteAccount() {
+    Alert.alert("Delete Account", "Are you sure? This cannot be undone.", [
+      { text: "Cancel" },
+      {
+        text: "Delete", onPress: async () => {
+          const userApps = await db.select().from(applications).where(eq(applications.userId, userId));
+          const appIds = userApps.map(a => a.id);
+          if (appIds.length > 0) {
+            await db.delete(statusLogs).where(inArray(statusLogs.applicationId, appIds));
+          }
+          await db.delete(applications).where(eq(applications.userId, userId));
+          await db.delete(categories).where(eq(categories.userId, userId));
+          await db.delete(targets).where(eq(targets.userId, userId));
+          await db.delete(users).where(eq(users.id, userId));
+          onLogout();
+        }
+      }
+    ]);
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -63,6 +84,14 @@ export default function InsightsScreen({ route }) {
           </View>
         );
       })}
+
+      <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+        <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
+        <Text style={styles.buttonText}>Delete Account</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -80,4 +109,7 @@ const styles = StyleSheet.create({
   barBackground: { height: 16, backgroundColor: "#eee", borderRadius: 8, marginBottom: 2 },
   barFill: { height: 16, borderRadius: 8 },
   barCount: { fontSize: 12, color: "#888" },
+  logoutButton: { backgroundColor: "#2e7d32", padding: 14, borderRadius: 8, alignItems: "center", marginTop: 30 },
+  deleteButton: { backgroundColor: "#c0392b", padding: 14, borderRadius: 8, alignItems: "center", marginTop: 10, marginBottom: 40 },
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
 });

@@ -5,7 +5,7 @@ import { categories } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 const COLOURS = ["#4caf7f", "#2196F3", "#FF9800", "#9C27B0", "#F44336", "#00BCD4"];
-const ICONS = ["💻", "💰", "📊", "🎓", "📢", "🏢"];
+const ICONS = ["T", "F", "C", "G", "M", "B"];
 
 export default function CategoriesScreen({ route }) {
   const userId = route?.params?.userId || 1;
@@ -85,7 +85,7 @@ export default function CategoriesScreen({ route }) {
             style={[styles.iconButton, icon === i && styles.selected]}
             onPress={() => setIcon(i)}
           >
-            <Text style={{ fontSize: 20 }}>{i}</Text>
+            <Text style={{ fontSize: 16 }}>{i}</Text>
           </TouchableOpacity>
         ))}
       </View>

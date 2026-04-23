@@ -15,10 +15,10 @@ export async function seedDatabase() {
     ]);
 
     await db.insert(categories).values([
-      { name: "Technology", colour: "#4caf7f", icon: "💻", userId: 1 },
-      { name: "Finance", colour: "#2196F3", icon: "💰", userId: 1 },
-      { name: "Consulting", colour: "#FF9800", icon: "📊", userId: 1 },
-      { name: "Graduate", colour: "#9C27B0", icon: "🎓", userId: 1 },
+      { name: "Technology", colour: "#4caf7f", icon: "T", userId: 1 },
+      { name: "Finance", colour: "#2196F3", icon: "F", userId: 1 },
+      { name: "Consulting", colour: "#FF9800", icon: "C", userId: 1 },
+      { name: "Graduate", colour: "#9C27B0", icon: "G", userId: 1 },
     ]);
 
     await db.insert(applications).values([
